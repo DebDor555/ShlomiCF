@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>כניסה — תזרים מזומנים</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f2744;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-header {
+      color: #e8f4fd;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .login-box {
+      background: #1e3a5f;
+      border-radius: 10px;
+      padding: 2rem 2.5rem;
+      width: min(380px, calc(100vw - 32px));
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 1.1rem;
+    }
+
+    label {
+      color: #a8c8e8;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    input {
+      background: #0f2744;
+      border: 1px solid #2a5080;
+      border-radius: 6px;
+      color: #e8f4fd;
+      font-size: 1rem;
+      padding: 0.55rem 0.75rem;
+      outline: none;
+      transition: border-color 0.15s;
+      direction: ltr;
+      text-align: right;
+    }
+
+    input:focus {
+      border-color: #4a90d9;
+    }
+
+    .btn-login {
+      width: 100%;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.65rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s;
+    }
+
+    .btn-login:hover { background: #1d4ed8; }
+    .btn-login:active { background: #1e40af; }
+
+    .error-msg {
+      color: #f87171;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 0.75rem;
+      min-height: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-header">תזרים מזומנים</div>
+  <div class="login-box">
+    <div class="form-row">
+      <label for="email">אימייל</label>
+      <input type="email" id="email" autocomplete="username" placeholder="your@email.com">
+    </div>
+    <div class="form-row">
+      <label for="password">סיסמה</label>
+      <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <button class="btn-login" id="btn-login">כניסה</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <script>
+    const emailEl = document.getElementById('email');
+    const passEl  = document.getElementById('password');
+    const btnEl   = document.getElementById('btn-login');
+    const errEl   = document.getElementById('error-msg');
+
+    async function doLogin() {
+      errEl.textContent = '';
+      btnEl.disabled = true;
+      try {
+        const r = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailEl.value, password: passEl.value })
+        });
+        if (r.ok) {
+          window.location.href = '/';
+        } else {
+          const data = await r.json().catch(() => ({}));
+          errEl.textContent = data.error || 'שגיאת כניסה';
+        }
+      } catch {
+        errEl.textContent = 'שגיאת רשת';
+      } finally {
+        btnEl.disabled = false;
+      }
+    }
+
+    btnEl.addEventListener('click', doLogin);
+    [emailEl, passEl].forEach(el =>
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); })
+    );
+  </script>
+</body>
+</html>

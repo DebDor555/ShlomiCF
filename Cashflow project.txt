@@ -1,0 +1,74 @@
+  Please:
+  1. Stop the running server (Ctrl+C in the terminal where it's running)
+  2. Restart it: node server.js from C:\Users\Deb\Documents\CashflowPlanner
+  3. Check if you see any error output in the terminal when it starts
+
+
+Cashflow project
+
+deborah555@gmail.com, and shlomi.nachum@amdocs.com - for both the password is ShlomiCF123!
+
+
+  
+My Stack Recommendation
+
+  Given you already have Arugga (Node.js + vanilla JS):
+
+  Backend:    Node.js + Express (same as Arugga)
+  Storage:    SQLite (step up from localStorage — this needs real persistence)
+  Frontend:   Vanilla JS or Vue 3 (lightweight, no big framework needed)
+  Grid:       Either hand-built CSS grid or a lightweight lib like Handsontable
+
+  OR — for a faster first version: Google Sheets + Apps Script could give you 80% of this in a day, with a proper UI
+  later.
+
+  ---
+  The Build Order
+
+  1. Schema        Define DB tables: accounts, recurring_items, events, scenarios
+  2. Assumptions   Build the recurring items CRUD form
+  3. Events        Build the one-off events form (date picker + amount + direction)
+  4. Engine        Write the daily calculation function (pure JS, easily testable)
+  5. Grid          Render the 14-day view
+  6. Scenarios     Add the 3-scenario toggle on top of what you have
+  7. FX            Add currency conversion layer
+
+  The engine (step 4) is a single pure function — maybe 40 lines of JS. Everything else is UI and data plumbing.
+
+  ---
+  The Insight from Your Excel
+
+  Looking at your file, the company's biggest cashflow risk is timing mismatch: large client payments (Bronza ₪424K, RTS
+   ₪124K) come in chunks weeks apart, while costs are daily/monthly and continuous. That's exactly what this tool should
+   make visually obvious — the dips between payment events are where you need a line of credit or bridge loan.
+
+----------------------------------------------------------------------------------------------------
+ There is real, working code — no documentation files were created at all. Here's exactly what exists on disk:
+
+  db/database.js — Real Node.js code. Creates the SQLite database, defines 4 tables, seeds 25 recurring items from the
+  company's expense data (salaries, rent, taxes, loans, utilities), and exports CRUD functions.
+
+  server.js — Real Express server. Runs on port 3001, exposes REST API endpoints (GET/PUT /api/accounts, GET/PUT
+  /api/fx-rates, full CRUD on /api/recurring and /api/events). Verified working — we tested it with curl and it returned
+   the 4 bank accounts and all 25 recurring items as JSON.
+
+  public/index.html — Real HTML. The full app shell with toolbar, date pickers, scenario dropdown, the accounts bar, the
+   cashflow grid container, and 3 modals (event form, recurring item form, account balance editor).
+
+  public/css/styles.css — Real CSS. RTL layout, sticky first column, color-coded category rows (green/red/blue/purple),
+  positive/negative balance coloring, modal overlays, the accounts bar.
+
+  public/js/api.js — Real JS. Thin fetch wrapper for all 4 API resources.
+
+  public/js/engine.js — Real JS. Pure function that takes accounts + FX rates + recurring items + events and computes a
+  day-by-day cashflow grid (opening balance, all items, net, closing balance).
+
+  public/js/app.js — Real JS. Loads data from API on startup, renders the grid using the engine, handles all click
+  events, manages modal open/close/save/delete, re-renders on changes.
+
+  package.json — Real npm config. Dependencies installed and verified (npm install succeeded).
+
+  The server is currently running. If you open http://localhost:3001 in your browser right now you should see the app.
+  The only thing you'd need to do is enter your actual account balances (double-click any account chip in the blue bar)
+  to see real cashflow numbers.
+

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>תזרים מזומנים</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<!-- ── Toolbar ──────────────────────────────────────────────────────────────── -->
+<div id="toolbar">
+  <h1>תזרים מזומנים</h1>
+
+  <div class="toolbar-group">
+    <label class="lbl">מ:</label>
+    <input type="date" id="from-date">
+    <label class="lbl">עד:</label>
+    <input type="date" id="to-date">
+  </div>
+
+  <div class="toolbar-sep"></div>
+
+  <div class="toolbar-group">
+    <label class="lbl">תרחיש:</label>
+    <select id="scenario-select" class="toolbar-select">
+      <option value="base">בסיס</option>
+      <option value="optimistic">אופטימי</option>
+      <option value="pessimistic">פסימי</option>
+    </select>
+  </div>
+
+  <div class="toolbar-sep"></div>
+
+  <div class="toolbar-group">
+    <button id="btn-add-event" class="btn-primary">+ אירוע חד-פעמי</button>
+    <button id="btn-add-recurring" class="btn-secondary">+ פריט חוזר</button>
+    <button id="btn-show-recurring" class="btn-secondary">רשימת פריטים חוזרים</button>
+  </div>
+
+  <div class="toolbar-sep"></div>
+
+  <div class="toolbar-group">
+    <button id="btn-logout" class="btn-secondary">יציאה</button>
+  </div>
+</div>
+
+<!-- ── Accounts Bar ──────────────────────────────────────────────────────────── -->
+<div id="accounts-bar">
+  <!-- populated by app.js -->
+</div>
+
+<!-- ── Grid ─────────────────────────────────────────────────────────────────── -->
+<div id="grid-wrapper">
+  <div id="grid">
+    <!-- populated by app.js -->
+  </div>
+</div>
+
+<!-- ── Recurring Panel ───────────────────────────────────────────────────────── -->
+<div id="recurring-panel">
+  <!-- populated by app.js -->
+</div>
+
+<!-- ── Event Modal ───────────────────────────────────────────────────────────── -->
+<div id="event-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>אירוע חד-פעמי</h2>
+
+    <div class="form-row-inline">
+      <div class="form-row">
+        <label>תאריך</label>
+        <input type="date" id="ev-date">
+      </div>
+      <div class="form-row">
+        <label>מטבע</label>
+        <select id="ev-currency">
+          <option value="ILS">ILS ₪</option>
+          <option value="USD">USD $</option>
+          <option value="EUR">EUR €</option>
+          <option value="GBP">GBP £</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>שם</label>
+      <input type="text" id="ev-name" placeholder="תיאור האירוע">
+    </div>
+
+    <div class="form-row-inline">
+      <div class="form-row">
+        <label>קטגוריה</label>
+        <select id="ev-category">
+          <option value="income">הכנסה</option>
+          <option value="supplier">ספק</option>
+          <option value="operating">תפעול</option>
+          <option value="financial">פיננסי</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>כיוון</label>
+        <select id="ev-direction">
+          <option value="in">הכנסה (in)</option>
+          <option value="out">הוצאה (out)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row-inline">
+      <div class="form-row">
+        <label>סכום</label>
+        <input type="number" id="ev-amount" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-row">
+        <label>תרחיש</label>
+        <select id="ev-scenario">
+          <option value="base">בסיס</option>
+          <option value="optimistic">אופטימי</option>
+          <option value="pessimistic">פסימי</option>
+          <option value="all">כולם</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-check">
+      <input type="checkbox" id="ev-confirmed" checked>
+      <label for="ev-confirmed">מאושר (ודאי)</label>
+    </div>
+
+    <div class="form-row">
+      <label>הערות</label>
+      <textarea id="ev-notes" placeholder="הערות אופציונליות..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button id="ev-delete-btn" class="btn-danger">מחק</button>
+      <div class="modal-actions-right">
+        <button id="ev-cancel" class="btn-secondary">ביטול</button>
+        <button id="ev-save" class="btn-primary">שמור</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Recurring Modal ───────────────────────────────────────────────────────── -->
+<div id="recurring-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>פריט חוזר חודשי</h2>
+
+    <div class="form-row">
+      <label>שם</label>
+      <input type="text" id="ri-name" placeholder="שם הפריט">
+    </div>
+
+    <div class="form-row-inline">
+      <div class="form-row">
+        <label>קטגוריה</label>
+        <select id="ri-category">
+          <option value="income">הכנסה</option>
+          <option value="supplier">ספק</option>
+          <option value="operating">תפעול</option>
+          <option value="financial">פיננסי</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>כיוון</label>
+        <select id="ri-direction">
+          <option value="in">הכנסה (in)</option>
+          <option value="out">הוצאה (out)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row-inline">
+      <div class="form-row">
+        <label>סכום</label>
+        <input type="number" id="ri-amount" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-row">
+        <label>מטבע</label>
+        <select id="ri-currency">
+          <option value="ILS">ILS ₪</option>
+          <option value="USD">USD $</option>
+          <option value="EUR">EUR €</option>
+          <option value="GBP">GBP £</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>יום בחודש (1–31)</label>
+      <input type="number" id="ri-day" min="1" max="31" value="1">
+    </div>
+
+    <div class="form-row">
+      <label>אמצעי תשלום</label>
+      <input type="text" id="ri-method" placeholder='הו"ק, העברה, הרשאה...'>
+    </div>
+
+    <div class="form-row">
+      <label>הערות</label>
+      <textarea id="ri-notes" placeholder="הערות אופציונליות..."></textarea>
+    </div>
+
+    <div class="form-check">
+      <input type="checkbox" id="ri-active" checked>
+      <label for="ri-active">פעיל</label>
+    </div>
+
+    <div class="modal-actions">
+      <button id="ri-delete-btn" class="btn-danger">מחק</button>
+      <div class="modal-actions-right">
+        <button id="ri-cancel" class="btn-secondary">ביטול</button>
+        <button id="ri-save" class="btn-primary">שמור</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Account Balance Modal ─────────────────────────────────────────────────── -->
+<div id="account-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h2>עדכון יתרת חשבון</h2>
+    <div class="form-row">
+      <label>חשבון</label>
+      <strong id="acc-name"></strong>
+    </div>
+    <div class="form-row">
+      <label>יתרה (<span id="acc-currency"></span>)</label>
+      <input type="number" id="acc-balance" step="0.01">
+    </div>
+    <div class="modal-actions">
+      <div></div>
+      <div class="modal-actions-right">
+        <button id="acc-cancel" class="btn-secondary">ביטול</button>
+        <button id="acc-save" class="btn-primary">שמור</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/js/app.js"></script>
+<script>
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/login';
+  });
+</script>
+</body>
+</html>
